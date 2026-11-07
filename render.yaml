@@ -1,36 +1,30 @@
 services:
   - type: web
-    name: canopy-command-d2-d3-d5
-    repo: https://github.com/bandroidbw-lab/canopy-command-d2-d3-d5-members
+    name: apex-timberline-d2-members
     env: python
-    region: oregon
-    plan: starter
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app:app"
+    plan: free
+    buildCommand: pip install -r canopy-command-d2-d3-d5-members/requirements.txt
+    startCommand: gunicorn --chdir canopy-command-d2-d3-d5-members app:app
     envVars:
-      - key: PORT
-        value: 5000
+      - key: PYTHON_VERSION
+        value: 3.10.0
 
   - type: web
-    name: canopy-command-d6
-    repo: https://github.com/bandroidbw-lab/canopy-command-d6
+    name: apex-timberline-d6-admin
     env: python
-    region: oregon
-    plan: starter
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app:app"
+    plan: free
+    buildCommand: pip install -r canopy-command-d6/requirements.txt
+    startCommand: gunicorn --chdir canopy-command-d6 app:app
     envVars:
-      - key: PORT
-        value: 5001
+      - key: PYTHON_VERSION
+        value: 3.10.0
 
   - type: web
-    name: canopy-command-d4
-    repo: https://github.com/bandroidbw-lab/canopy-command-d4
+    name: apex-timberline-d4-outreach
     env: python
-    region: oregon
-    plan: starter
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app:app"
+    plan: free
+    buildCommand: pip install -r canopy-command-d4/requirements.txt
+    startCommand: gunicorn --chdir canopy-command-d4 app:app
     envVars:
-      - key: PORT
-        value: 5002
+      - key: PYTHON_VERSION
+        value: 3.10.0
