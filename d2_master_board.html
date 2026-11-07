@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Timberline Operations - D2 Master Membership & Fleet Control</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-green: #22c55e;
+            --accent-yellow: #eab308;
+            --accent-red: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --primary: #3b82f6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+        
+        /* Header & Navigation */
+        header { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .logo-area { display: flex; align-items: center; gap: 0.75rem; }
+        .logo-area h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.05em; color: var(--primary); }
+        .badge { background: rgba(59, 130, 246, 0.15); color: var(--primary); font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 999px; font-weight: 600; }
+        
+        /* Notification Dot */
+        .notification-container { position: relative; cursor: pointer; }
+        .red-dot { position: absolute; top: -2px; right: -2px; width: 10px; height: 10px; background-color: var(--accent-red); border-radius: 50%; box-shadow: 0 0 8px var(--accent-red); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.8; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.8; } }
+
+        /* Hamburger Menu for Mobile */
+        .hamburger { display: none; background: none; border: none; color: var(--text-main); font-size: 1.5rem; cursor: pointer; }
+        nav.nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        nav.nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+        nav.nav-links a:hover { color: var(--text-main); }
+
+        /* Main Container & Grid Layout */
+        .main-container { padding: 1.5rem; max-width: 1400px; margin: 0 auto; width: 100%; flex: 1; display: grid; grid-template-columns: 1fr 350px; gap: 1.5rem; }
+        @media (max-width: 1024px) {
+            .main-container { grid-template-columns: 1fr; }
+            .hamburger { display: block; }
+            nav.nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: var(--card-bg); flex-direction: column; padding: 1rem; border-bottom: 1px solid var(--border); gap: 1rem; }
+            nav.nav-links.active { display: flex; }
+        }
+
+        /* Dashboard Cards */
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .card h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
+
+        /* Storm Watch Widget */
+        .storm-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .star-rating { font-size: 1.25rem; font-weight: 700; color: var(--accent-red); background: rgba(239, 68, 68, 0.1); padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .trend-graph { height: 80px; display: flex; align-items: flex-end; gap: 8px; padding-top: 10px; border-bottom: 1px dashed var(--border); margin-bottom: 1rem; }
+        .bar { flex: 1; background: var(--border); border-radius: 4px 4px 0 0; transition: height 0.3s; position: relative; }
+        .bar.green { background: var(--accent-green); }
+        .bar.yellow { background: var(--accent-yellow); }
+        .bar.red { background: var(--accent-red); height: 90% !important; }
+
+        /* Quick Action Buttons */
+        .btn-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; }
+        .btn { background: #2563eb; color: white; border: none; padding: 0.75rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: center; text-decoration: none; font-size: 0.9rem; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        .btn:hover { background: #1d4ed8; }
+        .btn-secondary { background: #334155; color: var(--text-main); }
+        .btn-secondary:hover { background: #475569; }
+
+        /* Sidebar & Tree Structure */
+        .tree-list { list-style: none; padding-left: 1rem; border-left: 2px solid var(--border); margin-top: 0.75rem; }
+        .tree-list li { margin: 0.5rem 0; position: relative; font-size: 0.9rem; color: var(--text-muted); }
+        .tree-list li::before { content: "├── "; color: var(--primary); font-family: monospace; }
+        .tree-list li:last-child::before { content: "└── "; }
+
+        /* Footer */
+        footer { text-align: center; padding: 1.5rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem; background: var(--card-bg); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <h1>Apex Timberline Operations</h1>
+            <span class="badge">D2 Master Control</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <div class="notification-container" title="Active Storm Warning">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                <div class="red-dot"></div>
+            </div>
+            <button class="hamburger" onclick="toggleMenu()">☰</button>
+        </div>
+        <nav class="nav-links" id="navLinks">
+            <a href="#fleet">Fleet Recovery</a>
+            <a href="#storm">NC Storm Chase</a>
+            <a href="#hazards">Hazard Scans</a>
+            <a href="#mock">Presentation Mock</a>
+        </nav>
+    </header>
+
+    <div class="main-container">
+        <!-- Left Column: Core Operations & Storm Tracking -->
+        <main>
+            <!-- Sangre de Cristo / Regional Storm Watch -->
+            <div class="card" id="storm">
+                <div class="storm-header">
+                    <h2>🌩️ Active Regional Storm Watch (<span id="regionName">NC Corridor</span>)</h2>
+                    <div class="star-rating">⚡ 9 / 10 Pre-Storm</div>
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Severe convective wind shear detected intersecting active service grid within 45 miles. Structure filter verified.</p>
+                
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">10-Star Trend Progression:</div>
+                <div class="trend-graph">
+                    <div class="bar green" style="height: 30%;" title="2 Stars"></div>
+                    <div class="bar green" style="height: 40%;" title="3 Stars"></div>
+                    <div class="bar yellow" style="height: 60%;" title="5 Stars"></div>
+                    <div class="bar yellow" style="height: 70%;" title="7 Stars"></div>
+                    <div class="bar red" style="height: 95%;" title="9 Stars"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
+                    <span>T-Minus 4h</span>
+                    <span>T-Minus 2h</span>
+                    <span>Current Vector</span>
+                </div>
+            </div>
+
+            <!-- Quick Action Command Grid -->
+            <div class="card">
+                <h2>🚀 Field Command & Operations</h2>
+                <div class="btn-grid">
+                    <button class="btn"><span>🔄</span> Fleet Hot-Swap</button>
+                    <button class="btn btn-secondary"><span>🌲</span> D5 Hazard Scan</button>
+                    <button class="btn btn-secondary"><span>💬</span> Text Copy ($1)</button>
+                    <button class="btn btn-secondary"><span>📊</span> Ad-Hoc ($3.50)</button>
+                </div>
+            </div>
+
+            <!-- Presentation Board Mock Widget -->
+            <div class="card" id="mock">
+                <h2>📺 Presentation Board Live Mock</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Live preview of telemetry displayed to commercial prospects during D4 outreach callbacks.</p>
+                <div style="background: rgba(15, 23, 42, 0.6); padding: 1rem; border-radius: 8px; border: 1px solid var(--border);">
+                    <div style="display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 0.5rem;">
+                        <span>Status: Protected by Apex Timberline</span>
+                        <span style="color: var(--accent-green);">● Active Feed</span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">Real-time meteorological hardening and emergency crew relocation protocols engaged.</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Column: Tree Business Reports & Hierarchy -->
+        <aside>
+            <div class="card">
+                <h2>📂 Tree Business Reports</h2>
+                <ul class="tree-list">
+                    <li>Root: Apex Master Governance
+                        <ul class="tree-list">
+                            <li>Storm Watch (NC Feed)
+                                <ul class="tree-list">
+                                    <li>Pre-Storm Potential (9 Stars)</li>
+                                    <li>Vector Cone & Evacuation Trigger</li>
+                                </ul>
+                            </li>
+                            <li>Good Name & Reputation
+                                <ul class="tree-list">
+                                    <li>Verified Local Standing</li>
+                                    <li>Client Callback Queue</li>
+                                </ul>
+                            </li>
+                            <li>Operational Execution
+                                <ul class="tree-list">
+                                    <li>Fleet Recovery Hot-Swaps</li>
+                                    <li>Ad-Hoc Hazard Scans ($2.00 / $3.50)</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <footer>
+        Apex Timberline Operations © 2026 — D2 Master Fleet Control & Regional Storm Intelligence
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const nav = document.getElementById('navLinks');
+            nav.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
