@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: canopy-command-d2-d3-d5
+    repo: https://github.com/bandroidbw-lab/canopy-command-d2-d3-d5-members
+    env: python
+    region: oregon
+    plan: starter
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    envVars:
+      - key: PORT
+        value: 5000
+
+  - type: web
+    name: canopy-command-d6
+    repo: https://github.com/bandroidbw-lab/canopy-command-d6
+    env: python
+    region: oregon
+    plan: starter
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    envVars:
+      - key: PORT
+        value: 5001
+
+  - type: web
+    name: canopy-command-d4
+    repo: https://github.com/bandroidbw-lab/canopy-command-d4
+    env: python
+    region: oregon
+    plan: starter
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    envVars:
+      - key: PORT
+        value: 5002
