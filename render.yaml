@@ -3,8 +3,8 @@ services:
     name: apex-timberline-d2-members
     env: python
     plan: free
-    buildCommand: pip install -r canopy-command-d2-d3-d5-members/requirements.txt
-    startCommand: gunicorn --bind 0.0.0.0:$PORT --chdir canopy-command-d2-d3-d5-members app:app
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT app:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
@@ -13,8 +13,8 @@ services:
     name: apex-timberline-d6-admin
     env: python
     plan: free
-    buildCommand: pip install -r canopy-command-d6/requirements.txt
-    startCommand: gunicorn --bind 0.0.0.0:$PORT --chdir canopy-command-d6 app:app
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT app:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
@@ -23,8 +23,8 @@ services:
     name: apex-timberline-d4-outreach
     env: python
     plan: free
-    buildCommand: pip install -r canopy-command-d4/requirements.txt
-    startCommand: gunicorn --bind 0.0.0.0:$PORT --chdir canopy-command-d4 app:app
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT app:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
