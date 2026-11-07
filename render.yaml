@@ -4,7 +4,7 @@ services:
     env: python
     plan: free
     buildCommand: pip install -r canopy-command-d2-d3-d5-members/requirements.txt
-    startCommand: gunicorn --chdir canopy-command-d2-d3-d5-members app:app
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --chdir canopy-command-d2-d3-d5-members app:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
@@ -14,7 +14,7 @@ services:
     env: python
     plan: free
     buildCommand: pip install -r canopy-command-d6/requirements.txt
-    startCommand: gunicorn --chdir canopy-command-d6 app:app
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --chdir canopy-command-d6 app:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
@@ -24,7 +24,7 @@ services:
     env: python
     plan: free
     buildCommand: pip install -r canopy-command-d4/requirements.txt
-    startCommand: gunicorn --chdir canopy-command-d4 app:app
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --chdir canopy-command-d4 app:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
