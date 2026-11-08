@@ -40,7 +40,7 @@ def d6_admin():
     return jsonify({
         "service": "apex-timberline-d6-admin",
         "status": "governance_active",
-        "governance": "Master Governance & System Logging"
+        "governance": "Master Governance, Compliance & System Logging (Consolidated D1 & D6)"
     })
 
 if __name__ == '__main__':
